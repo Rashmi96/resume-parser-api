@@ -12,7 +12,7 @@ DELETE_FOLDER = 'uploads'
 app.config['DELETE_FOLDER'] = DELETE_FOLDER
 
 
-class FileUpload(Resource):
+class ResumeUpload(Resource):
     def post(self):
         # Check if the request contains files
         if 'files[]' not in request.files:
@@ -36,7 +36,7 @@ class FileUpload(Resource):
 
 
 
-class FileDownload(Resource):
+class ResumeDownload(Resource):
     def get(self, filename):
         # Construct the file path
         file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
@@ -48,7 +48,7 @@ class FileDownload(Resource):
         # Return the file for download
         return send_file(file_path, as_attachment=True)
 
-class MultipleFileDelete(Resource):
+class ExistingFileDelete(Resource):
     def delete(self):
         # Get the list of files in the folder
         folder_path = app.config['DELETE_FOLDER']
@@ -66,9 +66,9 @@ class MultipleFileDelete(Resource):
 
 
 # Create API routes
-api.add_resource(FileUpload, '/upload')
-api.add_resource(FileDownload, '/download/<string:filename>')
-api.add_resource(MultipleFileDelete, '/delete')
+api.add_resource(ResumeUpload, '/resumeUpload')
+api.add_resource(ResumeDownload, '/resumeDownload/<string:filename>')
+api.add_resource(ExistingFileDelete, '/existingFileDelete')
 
 if __name__ == '__main__':
     # Create the 'uploads' folder if it doesn't exist
