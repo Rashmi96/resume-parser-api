@@ -7,7 +7,7 @@ curl -X POST -F "files[]=@/Users/rashmiranjanswain/Documents/workspace/resume-ra
 
 download:
 
-curl -o /Users/rashmiranjanswain/Downloads/presentation.pdf http://127.0.0.1:5000/resumeDownload/presentation.pdf
+curl -o /Users/rashmiranjanswain/Downloads/presentation.pdf http://127.0.0.1:5000/ReportDownload/presentation.pdf
 
 delete:
 

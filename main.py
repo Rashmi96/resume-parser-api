@@ -36,7 +36,7 @@ class ResumeUpload(Resource):
 
 
 
-class ResumeDownload(Resource):
+class ReportDownload(Resource):
     def get(self, filename):
         # Construct the file path
         file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
@@ -67,7 +67,7 @@ class ExistingFileDelete(Resource):
 
 # Create API routes
 api.add_resource(ResumeUpload, '/resumeUpload')
-api.add_resource(ResumeDownload, '/resumeDownload/<string:filename>')
+api.add_resource(ReportDownload, '/ReportDownload/<string:filename>')
 api.add_resource(ExistingFileDelete, '/existingFileDelete')
 
 if __name__ == '__main__':
