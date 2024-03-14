@@ -1,6 +1,11 @@
-from flask import Flask, request, send_file
+from flask import Flask, request, send_file,jsonify
 from flask_restful import Api, Resource
 import os
+import glob
+
+from analyzer import analyzer
+from fileParser import fileParser
+from fileReader import fileReader
 
 app = Flask(__name__)
 api = Api(app)
@@ -35,9 +40,33 @@ class ResumeUpload(Resource):
         return {'message': 'Files uploaded successfully', 'file_paths': uploaded_files}
 
 
+@app.route('/predict', methods=['GET'])
+def predict():
+
+    #parse the pdf file
+    parsedResume = fileReader()
+
+    #Run the model
+    result = analyzer(parsedResume)
+    print("++++++")
+    print(result)
+    print(result.to_json(path_or_buf = None, orient = 'records', date_format = 'epoch', double_precision = 10, force_ascii = True, date_unit = 'ms', default_handler = None))
+
+
+
+    # Return the file for download
+    return jsonify(result.to_json(path_or_buf = None, orient = 'records', date_format = 'epoch', double_precision = 10, force_ascii = True, date_unit = 'ms', default_handler = None))
 
 class ReportDownload(Resource):
+
     def get(self, filename):
+
+        #parse the pdf file
+        parsedResume = fileReader()
+
+        #Run the model
+        result = analyzer(parsedResume)
+
         # Construct the file path
         file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
 
@@ -46,7 +75,7 @@ class ReportDownload(Resource):
             return {'error': 'File not found'}, 404
 
         # Return the file for download
-        return send_file(file_path, as_attachment=True)
+        return result.to_json('ranking.json', orient='records')
 
 class ExistingFileDelete(Resource):
     def delete(self):
@@ -63,7 +92,13 @@ class ExistingFileDelete(Resource):
 
         return {'message': 'All files deleted successfully', 'deleted_files': deleted_files}
 
+# @app.route('/predict', methods=['POST'])
+class Analyzed(Resource):
+    def analyze(self):
+        # Get the list of files in the folder
+        analyzer()
 
+        return {'analyzing'}
 
 # Create API routes
 api.add_resource(ResumeUpload, '/resumeUpload')
