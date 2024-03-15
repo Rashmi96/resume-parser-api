@@ -86,7 +86,7 @@ def analyzer(parsedResume, context, noOfMatches, threshold):
     lemmatizer = WordNetLemmatizer()
     analyzer = CountVectorizer().build_analyzer()
 
-    with open('/jdPath/Job Description.txt', 'r', encoding ='utf-8') as f:
+    with open('/Users/rashmiranjanswain/Documents/workspace/resume-parser-api/jdPath/Job Description.txt', 'r', encoding ='utf-8') as f:
         file_desc_lst =  [r.replace('\n', '') for r in f.readlines()]
 
 
