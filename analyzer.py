@@ -1,18 +1,14 @@
 import pandas as pd
 import os
-import re
 from nltk.corpus import wordnet
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics.pairwise import cosine_similarity
 from nltk.stem.wordnet import WordNetLemmatizer
-from nltk.corpus import stopwords as stp
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 import nltk
 
 
-def analyzer(parsedResume):
+def analyzer(parsedResume, context, noOfMatches, threshold):
     # nltk.download('all')
     # nltk.download('averaged_perceptron_tagger')
     print('Running the model')
@@ -90,7 +86,7 @@ def analyzer(parsedResume):
     lemmatizer = WordNetLemmatizer()
     analyzer = CountVectorizer().build_analyzer()
 
-    with open('/Users/rashmiranjanswain/Documents/workspace/resume-parser-api/uploads/Job Description.txt','r',encoding = 'utf-8') as f:
+    with open('/jdPath/Job Description.txt', 'r', encoding ='utf-8') as f:
         file_desc_lst =  [r.replace('\n', '') for r in f.readlines()]
 
 
@@ -116,12 +112,13 @@ def analyzer(parsedResume):
 
     cos_sim_list = get_tf_idf_cosine_similarity(job_description,all_resume_text)
 
-    zipped_resume_rating = zip(df_cp.email,cos_sim_list,[x for x in range(len(df))])
-    sorted_resume_rating_list = sorted(zipped_resume_rating, key = lambda x: round(x[1]*100,2))
-    results = pd.DataFrame(sorted_resume_rating_list, columns=['E-Mail', 'resume_score(%)','Ranking'])
+    zipped_resume_rating = zip(df_cp.email,df_cp.fileName ,cos_sim_list,[x for x in range(len(df))])
+    sorted_resume_rating_list = sorted(zipped_resume_rating, key = lambda x: round(x[2]*100,2))
+    results = pd.DataFrame(sorted_resume_rating_list, columns=['E-Mail','File Name' ,'resume_score(%)','Ranking'])
     results['resume_score(%)'] = results.get('resume_score(%)')*100
+    results = results[results['resume_score(%)'] >= threshold]
 
-    return results.sort_values(by=['resume_score(%)'],ascending=False).head(10)
+    return results.sort_values(by=['resume_score(%)'],ascending=False).head(noOfMatches)
 
 
 

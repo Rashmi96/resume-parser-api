@@ -40,8 +40,8 @@ class ResumeUpload(Resource):
         return {'message': 'Files uploaded successfully', 'file_paths': uploaded_files}
 
 
-@app.route('/predict', methods=['GET'])
-def predict():
+@app.route('/predict1', methods=['GET'])
+def predict1():
 
     #parse the pdf file
     parsedResume = fileReader()
@@ -56,6 +56,26 @@ def predict():
 
     # Return the file for download
     return jsonify(result.to_json(path_or_buf = None, orient = 'records', date_format = 'epoch', double_precision = 10, force_ascii = True, date_unit = 'ms', default_handler = None))
+
+@app.route('/predict', methods=['POST'])
+def predict():
+
+    data = request.get_json()
+
+    threshold = data.get('threshold')
+    noOfMatches = data.get('noOfMatches')
+    inputPath = data.get('inputPath')
+    context = data.get('context')
+
+    #parse the pdf file
+    parsedResume = fileReader(inputPath)
+
+    #Run the model
+    result = analyzer(parsedResume, context, noOfMatches, threshold)
+    # print(result.to_json(path_or_buf = None, orient = 'records', date_format = 'epoch', double_precision = 10, force_ascii = True, date_unit = 'ms', default_handler = None))
+    # Return the file for download
+    return jsonify(result.to_json(path_or_buf = None, orient = 'records', date_format = 'epoch', double_precision = 10, force_ascii = True, date_unit = 'ms', default_handler = None))
+
 
 class ReportDownload(Resource):
 

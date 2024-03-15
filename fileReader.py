@@ -6,7 +6,7 @@ import pandas as pd
 from fileParser import fileParser
 
 
-def fileReader():
+def fileReader(inputPath):
     Resume_Vector = []
     Ordered_list_Resume = []
     Ordered_list_Resume_Score = []
@@ -16,7 +16,7 @@ def fileReader():
     LIST_OF_FILES_DOCX = []
     Resumes = []
 
-    os.chdir('./uploads')
+    os.chdir(inputPath)
     for file in glob.glob('**/*.pdf', recursive=True):
         LIST_OF_FILES_PDF.append(file)
     for file in glob.glob('**/*.doc', recursive=True):
@@ -33,11 +33,11 @@ def fileReader():
         Temp = i.split(".")
         if Temp[1] == "pdf" or Temp[1] == "Pdf" or Temp[1] == "PDF":
             try:
-                print(i)
+                print("This is PDF File" , i)
                 parsedSingleResume = fileParser(i)
+                parsedSingleResume['fileName'] = i
+
                 concatenated_dfs.append(parsedSingleResume)
-                # parsedresume = pd.concat([parsedresume,parsedSingleResume], axis = 1)
-                # print(parsedresume)
             except Exception as e: print(e)
 
         if Temp[1] == "txt" or Temp[1] == "Txt" or Temp[1] == "TXT":
@@ -45,6 +45,8 @@ def fileReader():
 
             try:
                 parsedSingleResume = fileParser(i)
+                parsedSingleResume['fileName'] = i
+
                 concatenated_dfs.append(parsedSingleResume)
             except Exception as e: print(e)
 
@@ -53,6 +55,8 @@ def fileReader():
 
             try:
                 parsedSingleResume = fileParser(i)
+                parsedSingleResume['fileName'] = i
+
                 concatenated_dfs.append(parsedSingleResume)
             except Exception as e: print(e)
 
