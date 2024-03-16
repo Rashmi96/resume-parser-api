@@ -40,24 +40,6 @@ class ResumeUpload(Resource):
 
         return {'message': 'Files uploaded successfully', 'file_paths': uploaded_files}
 
-
-@app.route('/predict1', methods=['GET'])
-def predict1():
-
-    #parse the pdf file
-    parsedResume = fileReader()
-
-    #Run the model
-    result = analyzer(parsedResume)
-    print("++++++")
-    print(result)
-    print(result.to_json(path_or_buf = None, orient = 'records', date_format = 'epoch', double_precision = 10, force_ascii = True, date_unit = 'ms', default_handler = None))
-
-
-
-    # Return the file for download
-    return jsonify(result.to_json(path_or_buf = None, orient = 'records', date_format = 'epoch', double_precision = 10, force_ascii = True, date_unit = 'ms', default_handler = None))
-
 @app.route('/predict', methods=['POST'])
 def predict():
 
@@ -118,14 +100,6 @@ class ExistingFileDelete(Resource):
             deleted_files.append(file)
 
         return {'message': 'All files deleted successfully', 'deleted_files': deleted_files}
-
-# @app.route('/predict', methods=['POST'])
-class Analyzed(Resource):
-    def analyze(self):
-        # Get the list of files in the folder
-        analyzer()
-
-        return {'analyzing'}
 
 # Create API routes
 api.add_resource(ResumeUpload, '/resumeUpload')
