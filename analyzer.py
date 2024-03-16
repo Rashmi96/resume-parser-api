@@ -11,8 +11,8 @@ from contextParser import find_best_match
 
 
 def analyzer(parsedResume, context, noOfMatches, threshold):
-    # nltk.download('all') ̰
-    # nltk.download('averaged_perceptron_tagger')
+    nltk.download('all')
+    nltk.download('averaged_perceptron_tagger')
     print('Running the model')
     df = parsedResume
     df_cp = df.copy()
@@ -36,7 +36,7 @@ def analyzer(parsedResume, context, noOfMatches, threshold):
     df.isnull().sum()
     df.head()
 
-    df = pd.read_csv('/Users/rashmiranjanswain/Documents/workspace/resume-parser-api/jdPath/developer_skills.csv')
+    df = pd.read_csv('/app/developer_skills.csv')
     actual_context = find_best_match(context,df.columns)
     print('context = ' + context)
     print('actual_context = ' + actual_context)
