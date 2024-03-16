@@ -7,45 +7,48 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 import nltk
 
+from contextParser import find_best_match
+
 
 def analyzer(parsedResume, context, noOfMatches, threshold):
-    # nltk.download('all')
+    # nltk.download('all') ̰
     # nltk.download('averaged_perceptron_tagger')
     print('Running the model')
-    print(os.getcwd())
     df = parsedResume
-    # df = pd.read_csv(
-        # '/Users/rashmiranjanswain/Documents/workspace/resume-parser-api/uploads/Resume Ranking Data Set.csv')
     df_cp = df.copy()
+    print(df_cp)
 
 
     print('After removing the columns from dataset..')
     df_cp.isnull().sum()
 
-    df_cp['email'].fillna('NA', inplace=True)
-    df_cp['Phone number'].fillna('NA', inplace=True)
-    df_cp['skills'].fillna('NA', inplace=True)
-    df_cp['technical skills'].fillna('NA', inplace=True)
-    df_cp['tech stack'].fillna('NA', inplace=True)
+    if 'email' in df_cp.columns:
+        df_cp['email'].fillna('NA', inplace=True)
+    if 'Phone number' in df_cp.columns:
+        df_cp['Phone number'].fillna('NA', inplace=True)
+    if 'skills' in df_cp.columns:
+        df_cp['skills'].fillna('NA', inplace=True)
+    if 'technical skills' in df_cp.columns:
+        df_cp['technical skills'].fillna('NA', inplace=True)
+    if 'tech stack' in df_cp.columns:
+        df_cp['tech stack'].fillna('NA', inplace=True)
 
     df.isnull().sum()
     df.head()
 
-    df = pd.read_csv('/Users/rashmiranjanswain/Documents/workspace/resume-parser-api/jdPath/UpdatedResumeDataSet.csv')
-    print(df)
-
-    with open('/Users/rashmiranjanswain/Documents/workspace/resume-parser-api/jdPath/Job Description.txt', 'r', encoding ='utf-8') as f:
-        file_desc_lst =  [r.replace('\n', '') for r in f.readlines()]
-
-
+    df = pd.read_csv('/Users/rashmiranjanswain/Documents/workspace/resume-parser-api/jdPath/developer_skills.csv')
+    actual_context = find_best_match(context,df.columns)
+    print('context = ' + context)
+    print('actual_context = ' + actual_context)
     job_description = ''
 
-    for i in file_desc_lst:
+    for i in df.get(actual_context):
         if len(job_description) == 0:
             job_description = str(i)
         else:
             job_description = job_description + ' ' + str(i)
 
+    print(job_description)
 
     all_resume_text = []
 
@@ -60,11 +63,13 @@ def analyzer(parsedResume, context, noOfMatches, threshold):
 
     cos_sim_list = get_tf_idf_cosine_similarity(job_description,all_resume_text)
 
-    zipped_resume_rating = zip(df_cp.email,df_cp.fileName ,cos_sim_list,[x for x in range(len(df))])
+    zipped_resume_rating = zip(df_cp.email,df_cp.file_name ,cos_sim_list,[x for x in range(len(df))])
     sorted_resume_rating_list = sorted(zipped_resume_rating, key = lambda x: round(x[2]*100,2))
-    results = pd.DataFrame(sorted_resume_rating_list, columns=['E-Mail','File Name' ,'resume_score(%)','Ranking'])
+    results = pd.DataFrame(sorted_resume_rating_list, columns=['email ','file_name' ,'resume_score(%)','Ranking'])
+    results = results.drop('Ranking', axis =1)
     results['resume_score(%)'] = results.get('resume_score(%)')*100+50
     results = results[results['resume_score(%)'] >= threshold]
+    print(results.sort_values(by=['resume_score(%)'],ascending=True).head(noOfMatches))
 
     return results.sort_values(by=['resume_score(%)'],ascending=False).head(noOfMatches)
 

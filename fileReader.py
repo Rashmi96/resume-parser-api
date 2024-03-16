@@ -1,20 +1,13 @@
 import glob
 import os
-
 import pandas as pd
-
 from fileParser import fileParser
-
+import requests
 
 def fileReader(inputPath):
-    Resume_Vector = []
-    Ordered_list_Resume = []
-    Ordered_list_Resume_Score = []
-    LIST_OF_FILES = []
     LIST_OF_FILES_PDF = []
     LIST_OF_FILES_DOC = []
     LIST_OF_FILES_DOCX = []
-    Resumes = []
 
     os.chdir(inputPath)
     for file in glob.glob('**/*.pdf', recursive=True):

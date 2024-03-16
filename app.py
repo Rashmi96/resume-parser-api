@@ -6,6 +6,7 @@ import glob
 from analyzer import analyzer
 from fileParser import fileParser
 from fileReader import fileReader
+from fileReaderApi import process_files
 
 app = Flask(__name__)
 api = Api(app)
@@ -68,12 +69,15 @@ def predict():
     context = data.get('context')
 
     #parse the pdf file
-    parsedResume = fileReader(inputPath)
+    parsedResume = process_files(inputPath)
+    # parsedResume = fileReader(inputPath)
+    print(parsedResume)
 
     #Run the model
     result = analyzer(parsedResume, context, noOfMatches, threshold)
-    return jsonify(result.to_json(path_or_buf = None, orient = 'records', date_format = 'epoch', double_precision = 10, force_ascii = True, date_unit = 'ms', default_handler = None))
+    # return jsonify(result.to_json(path_or_buf = None, orient = 'records', date_format = 'epoch', double_precision = 10, force_ascii = True, date_unit = 'ms', default_handler = None))
 
+    return jsonify('{}')
 #dummy get call
 @app.route('/getHello', methods=['GET'])
 def getHello():
