@@ -2,7 +2,6 @@ from flask import Flask, request, send_file,jsonify
 from flask_restful import Api, Resource
 import os
 import glob
-
 from analyzer import analyzer
 from fileParser import fileParser
 from fileReader import fileReader
@@ -40,7 +39,7 @@ class ResumeUpload(Resource):
 
         return {'message': 'Files uploaded successfully', 'file_paths': uploaded_files}
 
-@app.route('/predict', methods=['POST'])
+@app.route('/search', methods=['POST'])
 def predict():
 
     data = request.get_json()
@@ -57,13 +56,13 @@ def predict():
 
     #Run the model
     result = analyzer(parsedResume, context, noOfMatches, threshold)
-    return jsonify(result.to_json(path_or_buf = None, orient = 'records', date_format = 'epoch', double_precision = 10, force_ascii = True, date_unit = 'ms', default_handler = None))
+    return result.to_json(path_or_buf = None, orient = 'records', date_format = 'epoch', double_precision = 10, force_ascii = True, date_unit = 'ms', default_handler = None)
 
 #dummy get call
-@app.route('/getHello', methods=['GET'])
+@app.route('/ping', methods=['GET'])
 def getHello():
    print('Hello World')
-   return "Hello World"
+   return {'project': 'You are into QuantumQuirks Project'}
 
 
 class ReportDownload(Resource):
@@ -107,7 +106,5 @@ api.add_resource(ReportDownload, '/ReportDownload/<string:filename>')
 api.add_resource(ExistingFileDelete, '/existingFileDelete')
 
 if __name__ == '__main__':
-    # Create the 'uploads' folder if it doesn't exist
-    os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
-
+    app.run(host='0.0.0.0', port=5000, debug=True)
     app.run(debug=True)
