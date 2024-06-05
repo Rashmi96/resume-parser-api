@@ -22,3 +22,12 @@ curl -X DELETE http://127.0.0.1:5000/existingFileDelete
 predict:
 
 curl --location 'http://127.0.0.1:5000/predict'
+
+curl --location 'http://127.0.0.1:5000/predict' \
+--header 'Content-Type: application/json' \
+--data '{
+  "context" : "Java Developer 5 year of Experience",
+  "category" : "resume",
+  "threshold" : 50,
+  "noOfMatches" : 3
+}'
