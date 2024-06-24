@@ -48,10 +48,9 @@ kubectl get services
 
 http://localhost:80/ping
 
-GCP
+#GCP
 
 project Id: prime-chess-427017-g2
-
 
 gcloud projects add-iam-policy-binding prime-chess-427017-g2 \
     --member='user:swain96@gmail.com' \
